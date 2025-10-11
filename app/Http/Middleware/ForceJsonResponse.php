@@ -15,11 +15,12 @@ class ForceJsonResponse
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Force the client to accept JSON responses
         $request->headers->set('Accept', 'application/json');
 
         $response = $next($request);
 
-        // S'assurer que la réponse est toujours en JSON
+        // Ensure the API always returns JSON, even if no Content-Type was set
         if (! $response->headers->has('Content-Type')) {
             $response->headers->set('Content-Type', 'application/json');
         }
