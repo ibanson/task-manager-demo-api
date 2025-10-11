@@ -1,0 +1,15 @@
+<?php
+
+return [
+    'paths' => ['v1/*', 'api/*'],
+    'allowed_methods' => ['*'],
+    'allowed_origins' => [
+        'http://localhost:5174',
+        'http://127.0.0.1:5174',
+        // Ajoute ici toutes les origines front dont tu as besoin
+    ],
+    'allowed_headers' => ['*'],
+    'exposed_headers' => [],
+    'max_age' => 0,
+    'supports_credentials' => false,
+];
