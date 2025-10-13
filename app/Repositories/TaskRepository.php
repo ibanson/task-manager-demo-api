@@ -2,33 +2,25 @@
 
 namespace App\Repositories;
 
+use App\Models\Board;
 use App\Models\Task;
-use Illuminate\Database\Eloquent\Collection;
 
 class TaskRepository
 {
     /**
      * Create new task
      */
-    public function createTask(array $payload): Task
+    public function createTask(Board $board, array $payload): Task
     {
-        return Task::create([
+        return $board->tasks()->create([
             'title' => $payload['title'] ?? null,
         ]);
     }
 
     /**
-     * Return all tasks
+     * Update task
      */
-    public function fetchTasks(): Collection
-    {
-        return Task::get();
-    }
-
-    /**
-     * Update a specific task (partial update)
-     */
-    public function updateTask(Task $task, array $payload): Task
+    public function updateTask(Board $board, Task $task, array $payload): Task
     {
         $task->update($payload);
 
@@ -36,7 +28,7 @@ class TaskRepository
     }
 
     /**
-     * Delete a specific task
+     * Delete task
      */
     public function deleteTask(Task $task): bool
     {

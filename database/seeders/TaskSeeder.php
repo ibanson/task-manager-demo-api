@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Board;
 use App\Models\Task;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -13,16 +14,36 @@ class TaskSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('boards')->truncate();
         DB::table('tasks')->truncate();
 
-        $tasksData = [
-            ['title' => 'Appeler client A'],
-            ['title' => 'Coder la nouvelle fonctionnalité'],
-            ['title' => 'Tester l\'application'],
+        $boardsData = [
+            [
+            'title' => 'Board Projets',
+            'tasks' => [
+                ['title' => 'Appeler client A'],
+                ['title' => 'Coder la nouvelle fonctionnalité'],
+            ],
+        ],
+        [
+            'title' => 'Board Perso',
+            'tasks' => [
+                ['title' => 'Aller chez Costco =)'],
+                ['title' => 'Rappeler le vétérinaire'],
+            ],
+        ],
         ];
 
-        foreach ($tasksData as $task) {
-            Task::create($task);
+
+
+        foreach ($boardsData as $board) {
+
+            // Isolate tasks
+            $tasks = $board['tasks'] ?? [];
+            unset($board['tasks']);
+
+            $boardEntity = Board::create($board);
+            $boardEntity->tasks()->createMany($tasks);
         }
     }
 }

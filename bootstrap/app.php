@@ -16,7 +16,24 @@ $app = Application::configure(basePath: dirname(__DIR__))
         $middleware->append(ForceJsonResponse::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+
+        // Handle global exception
+        $exceptions->render(function (Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => config('app.debug')
+                    ? $e->getMessage()
+                    : 'An internal server error occurred.'
+            ], 500);
+        });
+
+        // Handle global NotFoundHttpException
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Resource not found.'
+            ], 404);
+        });
     })->create();
 
 $app->booting(function () {

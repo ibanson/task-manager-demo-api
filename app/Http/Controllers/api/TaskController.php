@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreTaskRequest;
-use App\Http\Requests\UpdateTaskRequest;
+use App\Http\Requests\StoreBoardTaskRequest;
+use App\Http\Requests\UpdateBoardTaskRequest;
 use App\Http\Resources\TaskResource;
+use App\Models\Board;
 use App\Models\Task;
 use App\Repositories\TaskRepository;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TaskController extends Controller
 {
@@ -16,71 +19,37 @@ class TaskController extends Controller
         protected TaskRepository $taskRepository
     ) {}
 
-    public function index(): JsonResponse
+    /** Create new task */
+    public function store(StoreBoardTaskRequest $request, Board $board): JsonResponse
     {
-        try {
-            $data = $this->taskRepository->fetchTasks();
+        $data = $this->taskRepository->createTask($board, $request->validated());
 
-            return response()->json([
-                'success' => true,
-                'data' => TaskResource::collection($data),
-            ]);
-        } catch (\Exception $exception) {
-            return response()->json([
-                'success' => false,
-                'message' => $exception->getMessage(),
-            ], $exception->getCode());
-        }
+        return response()->json([
+            'success' => true,
+            'data' => new TaskResource($data),
+        ]);
     }
 
-    public function update(UpdateTaskRequest $request, Task $task): JsonResponse
+    public function update(Board $board, Task $task, UpdateBoardTaskRequest $request): JsonResponse
     {
-        try {
-            $data = $this->taskRepository->updateTask($task, $request->validated());
-
-            return response()->json([
-                'success' => true,
-                'data' => new TaskResource($data),
-            ]);
-        } catch (\Exception $exception) {
-            return response()->json([
-                'success' => false,
-                'message' => $exception->getMessage(),
-            ], $exception->getCode());
+        if ($task->board->id !== $board->id) {
+            throw new NotFoundHttpException('Task not found on this board');
         }
-    }
 
-    public function store(StoreTaskRequest $request): JsonResponse
-    {
-        try {
-            $data = $this->taskRepository->createTask($request->validated());
+        $data = $this->taskRepository->updateTask($board, $task, $request->validated());
 
-            return response()->json([
-                'success' => true,
-                'data' => new TaskResource($data),
-            ]);
-        } catch (\Exception $exception) {
-            return response()->json([
-                'success' => false,
-                'message' => $exception->getMessage(),
-            ], $exception->getCode());
-        }
+        return response()->json([
+            'success' => true,
+            'data' => new TaskResource($data),
+        ]);
     }
 
     public function destroy(Task $task): JsonResponse
     {
-        try {
-            $deleted = $this->taskRepository->deleteTask($task);
+        $deleted = $this->taskRepository->deleteTask($task);
 
-            return response()->json([
-                'success' => $deleted,
-            ]);
-        } catch (\Exception $exception) {
-            return response()->json([
-                'success' => false,
-                'message' => $exception->getMessage(),
-                'exception' => $exception->getCode(),
-            ]);
-        }
+        return response()->json([
+            'success' => $deleted,
+        ]);
     }
 }
