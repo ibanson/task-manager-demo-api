@@ -5,6 +5,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 $app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -17,23 +19,24 @@ $app = Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
 
-        // Handle global exception
+        // Handle global ModelNotFoundException
+        $exceptions->render(function (NotFoundHttpException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Resource not found.'
+            ], Response::HTTP_NOT_FOUND);
+        });
+
+        // Fallback global exception
         $exceptions->render(function (Throwable $e) {
             return response()->json([
                 'success' => false,
                 'message' => config('app.debug')
                     ? $e->getMessage()
                     : 'An internal server error occurred.'
-            ], 500);
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         });
 
-        // Handle global NotFoundHttpException
-        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Resource not found.'
-            ], 404);
-        });
     })->create();
 
 $app->booting(function () {

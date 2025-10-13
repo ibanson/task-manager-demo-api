@@ -10,8 +10,6 @@ use App\Models\Board;
 use App\Models\Task;
 use App\Repositories\TaskRepository;
 use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TaskController extends Controller
 {
@@ -32,10 +30,6 @@ class TaskController extends Controller
 
     public function update(Board $board, Task $task, UpdateBoardTaskRequest $request): JsonResponse
     {
-        if ($task->board->id !== $board->id) {
-            throw new NotFoundHttpException('Task not found on this board');
-        }
-
         $data = $this->taskRepository->updateTask($board, $task, $request->validated());
 
         return response()->json([
@@ -44,7 +38,7 @@ class TaskController extends Controller
         ]);
     }
 
-    public function destroy(Task $task): JsonResponse
+    public function destroy(Board $board, Task $task): JsonResponse
     {
         $deleted = $this->taskRepository->deleteTask($task);
 
