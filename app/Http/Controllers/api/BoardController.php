@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBoardRequest;
+use App\Http\Requests\UpdateBoardRequest;
 use App\Http\Resources\BoardResource;
 use App\Models\Board;
 use App\Repositories\BoardRepository;
@@ -32,6 +33,17 @@ class BoardController extends Controller
         return response()->json([
             'success' => true,
             'data' => BoardResource::collection($data),
+        ]);
+    }
+
+        /** Update board */
+    public function update(Board $board, UpdateBoardRequest $request): JsonResponse
+    {
+        $data = $this->boardRepository->updateBoard($board, $request->validated());
+
+        return response()->json([
+            'success' => true,
+            'data' => new BoardResource($data),
         ]);
     }
 

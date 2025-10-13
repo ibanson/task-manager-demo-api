@@ -7,9 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class BoardRepository
 {
-    /**
-     * Create new board
-     */
+    /** Create new board */
     public function createBoard(array $payload): Board
     {
         return Board::create([
@@ -17,25 +15,26 @@ class BoardRepository
         ]);
     }
 
-    /**
-     * Return board with tasks
-     */
+    /** Update board */
+    public function updateBoard(Board $board, array $payload): Board
+    {
+        $board->update($payload);
+        return $board;
+    }
+
+    /** Return board with tasks */
     public function fetchBoard(Board $board): Board
     {
         return $board->load('tasks');
     }
 
-    /**
-     * Return all tasks
-     */
+    /** Return all tasks */
     public function fetchBoards(): Collection
     {
         return Board::with('tasks')->get();
     }
 
-    /**
-     * Delete a specific board
-     */
+    /** Delete a specific board */
     public function deleteBoard(Board $board): bool
     {
         return $board->delete();
