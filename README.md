@@ -1,4 +1,4 @@
-# Activity Messenger – Demo Backend
+# Task manager - Demo Backend
 
 [![Laravel](https://img.shields.io/badge/Laravel-12.x-ff2d20?logo=laravel&logoColor=white&style=for-the-badge)](https://laravel.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?logo=postgresql&logoColor=white&style=for-the-badge)](https://www.postgresql.org/)
