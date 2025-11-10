@@ -1,61 +1,119 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Activity Messenger – Demo Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![Laravel](https://img.shields.io/badge/Laravel-11.x-ff2d20?logo=laravel&logoColor=white&style=for-the-badge)](https://laravel.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?logo=postgresql&logoColor=white&style=for-the-badge)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white&style=for-the-badge)](https://www.docker.com/)
 
-## About Laravel
+Application frontend réalisée dans le cadre d’un **test technique**.
+> Il expose une série d’endpoints RESTful consommés par une application frontend Vue.js 2, et démontre la mise en place d’un environnement de développement moderne intégrant PostgreSQL, Docker et Nginx.
+> Le but est de fournir un exemple clair et fonctionnel d’une architecture full-stack découplée, où chaque composant (frontend, backend, infrastructure Docker) peut être exécuté et maintenu indépendamment.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Stack technique
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- [Laravel 11](https://laravel.com/) – PHP framework
+- [PostgreSQL 15](https://www.postgresql.org/) – Relational database
+- [PHP-FPM 8.2](https://www.php.net/) – Runtime used in Docker
+- [Nginx](https://nginx.org/) – Reverse proxy / web server
+- [Docker Compose](https://docs.docker.com/compose/) – Environment orchestration
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 📁 Structure du projet
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+activity-messenger/
+├─ docker-compose.yml                 # Orchestration principale (API, Frontend, DB, Nginx, Adminer)
+│                                     # -> Dépôt cloné depuis : https://github.com/ibanson/activity-messenger-docker-config
+│
+├─ docker-config/                     # Configurations Docker partagées
+│   ├─ api/
+│   │   └─ Dockerfile                 # Image du backend (Laravel)
+│   │
+│   ├─ nginx/
+│   │   ├─ Dockerfile                 # Image Nginx (reverse proxy)
+│   │   └─ default.conf               # Configuration du serveur Nginx
+│   │
+│   └─ ssl/                           # (Optionnel) Certificats SSL de développement
+│
+├─ api/                               # Dépôt cloné depuis : https://github.com/ibanson/activity-messenger-demo-api
+│   └─ (Code source du backend Laravel)
+│
+├─ frontend/                          # Dépôt cloné depuis : https://github.com/ibanson/activity-messenger-demo-frontend
+│   └─ (Code source Vue.js 2)
+│
+├─ pg-data/                           # Volume local persistant pour PostgreSQL (non versionné)
+│
+└─ .gitignore                         # Ignore volumes, certificats, builds, etc.
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Project setup
 
-## Laravel Sponsors
+### 1. Cloner le dépôt
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+git clone https://github.com/ibanson/activity-messenger-demo-api.git
+cd activity-messenger-demo-api
+```
 
-### Premium Partners
+### 2. Installer les dépendances
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+composer install
+```
 
-## Contributing
+### 3. Configurer l'environnement et modifier les variables selon votre configuration locale
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+APP_NAME="Activity Messenger"
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://api.activitymessenger.local
 
-## Code of Conduct
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=activity_database
+DB_USERNAME=activity_user
+DB_PASSWORD=activity_pass
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 4. Générer la clé d’application
 
-## Security Vulnerabilities
+```bash
+php artisan key:generate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 5. Exécuter les migrations (et les seeders si nécessaire)
 
-## License
+```bash
+php artisan migrate --seed
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 6. Lancer le serveur de développement Laravel
+
+```bash
+php artisan serve
+```
+
+## Le projet sera accessible à l’adresse
+
+```bash
+http://localhost:8000
+```
+
+## 🐳 Si vous utilisez Docker
+
+> Selon la configuration disponible ici https://github.com/ibanson/activity-messenger-docker-config
+
+```bash
+docker compose up --build
+```
+
+Le service Laravel API sera alors accessible à :
+
+```bash
+http://api.activitymessenger.local
+```
