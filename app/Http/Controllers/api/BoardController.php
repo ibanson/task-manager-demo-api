@@ -36,7 +36,7 @@ class BoardController extends Controller
         ]);
     }
 
-        /** Update board */
+    /** Update board */
     public function update(Board $board, UpdateBoardRequest $request): JsonResponse
     {
         $data = $this->boardRepository->updateBoard($board, $request->validated());
